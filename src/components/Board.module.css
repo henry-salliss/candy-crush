@@ -4,4 +4,24 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-top: 50%;
+}
+
+@media only screen and (min-width: 600px) {
+  .board {
+    width: 540px;
+    height: 540px;
+    margin-top: 15%;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .board {
+    width: 630px;
+    height: 630px;
+    margin-top: 50px;
+  }
 }
