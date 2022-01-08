@@ -15,7 +15,20 @@ const Fruit = (props) => {
     if (img.includes(props.color)) src = img;
   });
 
-  return <img className={styles.fruit} alt="candy" src={src} />;
+  const longString = src.split("/").slice(-1);
+  const colorName = String(...longString).split("-")[0];
+
+  return (
+    <div onClick={props.onClickCandy}>
+      <img
+        className={!props.selected ? styles.fruit : styles.selected}
+        alt="candy"
+        src={src}
+        id={props.id}
+        candycolor={colorName}
+      />
+    </div>
+  );
 };
 
 export default Fruit;

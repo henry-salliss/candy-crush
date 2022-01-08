@@ -4,8 +4,21 @@
   margin: 2px;
 }
 
+.selected {
+  background-color: black;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+}
+
 @media only screen and (min-width: 600px) {
   .fruit {
+    width: 60px;
+    height: 60px;
+    margin: 3px;
+  }
+
+  .selected {
     width: 60px;
     height: 60px;
     margin: 3px;
@@ -14,6 +27,12 @@
 
 @media only screen and (min-width: 1200px) {
   .fruit {
+    width: 70px;
+    height: 70px;
+    margin: 4px;
+  }
+
+  .selected {
     width: 70px;
     height: 70px;
     margin: 4px;
