@@ -9,6 +9,7 @@ const Board = () => {
   // const dispatch = useDispatch();
   const [boardConfig, setBoardConfig] = useState([]);
   const [candyIDs, setCandyIDs] = useState([]);
+  const [clickedID, setClickedID] = useState(100);
   const [selectedCandy, setSelectedCandy] = useState({});
   const boardLayout = [];
   const candyIDArr = [];
@@ -29,28 +30,23 @@ const Board = () => {
     createBoard();
   }, []);
 
-  console.log(selectedCandy);
-
   const fruitClickHandler = (e) => {
     const selectedColor = e.target.getAttribute("candycolor");
-    const selectedId = e.target.id;
-    setSelectedCandy({
-      color: selectedColor,
-      id: selectedId,
-      clicked: true,
-    });
+    setClickedID(e.target.id);
+    setSelectedCandy(selectedColor);
   };
 
   // create the fruits
   const fruits = boardConfig.map((color, index) => {
     return (
-      <Fruit
-        selected={selectedCandy.clicked}
-        onClickCandy={fruitClickHandler}
-        color={color}
-        key={index}
-        id={index}
-      />
+      <div className={+clickedID === index ? styles.selected : ""} key={index}>
+        <Fruit
+          selected={selectedCandy}
+          onClickCandy={fruitClickHandler}
+          color={color}
+          id={index}
+        />
+      </div>
     );
   });
   return <div className={styles.board}>{fruits}</div>;

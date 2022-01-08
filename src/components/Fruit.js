@@ -21,7 +21,7 @@ const Fruit = (props) => {
   return (
     <div onClick={props.onClickCandy}>
       <img
-        className={!props.selected ? styles.fruit : styles.selected}
+        className={styles.fruit}
         alt="candy"
         src={src}
         id={props.id}
