@@ -2,24 +2,25 @@ import Fruit from "../components/Fruit";
 import styles from "./Board.module.css";
 // import { boardActions } from "../store/store";
 // import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useEffect, useState } from "react";
-import { createSlice } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
 
 const Board = () => {
-  // const dispatch = useDispatch();
+  // board state
   const [boardConfig, setBoardConfig] = useState([]);
-  const [candyIDs, setCandyIDs] = useState([]);
-  const [clickedID, setClickedID] = useState(100);
-  const [selectedCandy, setSelectedCandy] = useState({});
   const boardLayout = [];
-  const candyIDArr = [];
-
   const boardColors = ["red", "yellow", "blue", "green", "purple", "orange"];
+
+  // first candy selection
+  const [clickedID, setClickedID] = useState(100);
+  const [candySelected, setCandySelected] = useState(false);
+  const [selectedCandy, setSelectedCandy] = useState({});
+
+  // second candy selection
+  const [secondClickedID, setSecondClickedID] = useState(100);
+  const [secondCandySelected, setSecondSelectedCandy] = useState({});
 
   const createBoard = () => {
     for (let i = 1; i < 65; i++) {
-      candyIDArr.push(i);
-      setCandyIDs(candyIDArr);
       const item = Math.floor(Math.random() * boardColors.length);
       const color = boardColors[item];
       boardLayout.push(color);
@@ -30,19 +31,44 @@ const Board = () => {
     createBoard();
   }, []);
 
-  const fruitClickHandler = (e) => {
+  const firstCandyClickHandler = (e) => {
+    setCandySelected(true);
     const selectedColor = e.target.getAttribute("candycolor");
     setClickedID(e.target.id);
-    setSelectedCandy(selectedColor);
+    console.log(e.target.id);
+    setSelectedCandy({
+      color: selectedColor,
+      id: clickedID,
+      isSecondCandy: false,
+    });
+    console.log(selectedCandy);
+  };
+
+  const secondCandyClickHandler = (e) => {
+    setCandySelected(false);
+    const selectedColor = e.target.getAttribute("candycolor");
+    setSecondClickedID(e.target.id);
+    console.log(e.target.id);
+    setSecondSelectedCandy({
+      color: selectedColor,
+      id: secondClickedID,
+      isSecondCandy: true,
+    });
+    console.log(secondCandySelected);
   };
 
   // create the fruits
   const fruits = boardConfig.map((color, index) => {
+    let classes = "";
+    if (+clickedID === index) classes = styles.firstSelection;
+    if (+secondClickedID === index) classes = styles.secondSelection;
     return (
-      <div className={+clickedID === index ? styles.selected : ""} key={index}>
+      <div className={classes} key={index}>
         <Fruit
           selected={selectedCandy}
-          onClickCandy={fruitClickHandler}
+          onClickCandy={
+            !candySelected ? firstCandyClickHandler : secondCandyClickHandler
+          }
           color={color}
           id={index}
         />
