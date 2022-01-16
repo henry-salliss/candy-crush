@@ -5,6 +5,7 @@ import styles from "./Board.module.css";
 import { useEffect, useState } from "react";
 
 const Board = () => {
+  const width = 8;
   // board state
   const [boardConfig, setBoardConfig] = useState([]);
   const boardLayout = [];
@@ -18,6 +19,20 @@ const Board = () => {
   // second candy selection
   const [secondClickedID, setSecondClickedID] = useState(100);
   const [secondCandySelected, setSecondSelectedCandy] = useState({});
+
+  // available movements
+  const validMoves = [
+    clickedID.id - width,
+    clickedID.id - 1,
+    clickedID.id + width,
+    clickedID.id + 1,
+  ];
+
+  const swapCandys = (boardArray, firstID, secondID) => {
+    const tempArr = boardArray[firstID];
+    boardArray[firstID] = boardArray[secondID];
+    boardArray[secondID] = tempArr;
+  };
 
   const createBoard = () => {
     for (let i = 1; i < 65; i++) {
@@ -35,30 +50,28 @@ const Board = () => {
     setCandySelected(true);
     const selectedColor = e.target.getAttribute("candycolor");
     setClickedID(e.target.id);
-    console.log(e.target.id);
     setSelectedCandy({
       color: selectedColor,
       id: clickedID,
       isSecondCandy: false,
     });
-    console.log(selectedCandy);
   };
 
   const secondCandyClickHandler = (e) => {
     setCandySelected(false);
     const selectedColor = e.target.getAttribute("candycolor");
     setSecondClickedID(e.target.id);
-    console.log(e.target.id);
     setSecondSelectedCandy({
       color: selectedColor,
       id: secondClickedID,
       isSecondCandy: true,
     });
-    console.log(secondCandySelected);
+
+    swapCandys(boardConfig, clickedID, e.target.id);
   };
 
   // create the fruits
-  const fruits = boardConfig.map((color, index) => {
+  const candys = boardConfig.map((color, index) => {
     let classes = "";
     if (+clickedID === index) classes = styles.firstSelection;
     if (+secondClickedID === index) classes = styles.secondSelection;
@@ -75,7 +88,7 @@ const Board = () => {
       </div>
     );
   });
-  return <div className={styles.board}>{fruits}</div>;
+  return <div className={styles.board}>{candys}</div>;
 };
 
 export default Board;
