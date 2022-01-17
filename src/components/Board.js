@@ -1,7 +1,5 @@
 import Fruit from "../components/Fruit";
 import styles from "./Board.module.css";
-// import { boardActions } from "../store/store";
-// import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 const Board = () => {
@@ -42,6 +40,19 @@ const Board = () => {
       setBoardConfig(boardLayout);
     }
   };
+
+  let rows = [];
+
+  const createRows = (boardArray) => {
+    const allItems = [...boardArray];
+    for (let i = 1; i < 9; i++) {
+      const row = allItems.splice(0, 8);
+      rows.push(row);
+    }
+  };
+
+  createRows(boardConfig);
+
   useEffect(() => {
     createBoard();
   }, []);
@@ -69,6 +80,41 @@ const Board = () => {
 
     swapCandys(boardConfig, clickedID, e.target.id);
   };
+
+  const checkThreeInARow = (array) => {
+    const combos = [];
+
+    array.forEach((row, rowIndex) => {
+      for (let i = 1; i < row.length; i++) {
+        if (row[i] === row[i + 1] && row[i + 1] === row[i + 2]) {
+          combos.push([
+            rowIndex * 8 + i,
+            rowIndex * 8 + i + 1,
+            rowIndex * 8 + i + 2,
+          ]);
+        }
+      }
+    });
+    console.log(combos);
+  };
+  checkThreeInARow(rows);
+
+  const checkFourInARow = (array) => {
+    const combos = [];
+
+    for (let i = 1; i < array.length; i++) {
+      if (
+        array[i] === array[i + 1] &&
+        array[i + 1] === array[i + 2] &&
+        array[i + 2] === array[i + 3]
+      ) {
+        combos.push([i, i + 1, i + 2, i + 3]);
+      }
+    }
+    // console.log(combos);
+  };
+
+  checkFourInARow(boardConfig);
 
   // create the fruits
   const candys = boardConfig.map((color, index) => {
