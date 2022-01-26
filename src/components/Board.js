@@ -1,10 +1,12 @@
 import Fruit from "../components/Fruit";
 import styles from "./Board.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Board = () => {
   const width = 8;
   let toBeReplaced;
+  // let classes;
+  const [classes, setClasses] = useState("");
   // board state
   const [boardConfig, setBoardConfig] = useState([]);
   const tempBoardIndexs = [];
@@ -23,6 +25,7 @@ const Board = () => {
 
   // candies to be replaced
   const replaceCandies = [];
+  const [replaceableCandy, setReplaceableCandy] = useState(false);
   const [candiesToReplace, setCandiesToReplace] = useState([]);
 
   // available movements
@@ -91,7 +94,7 @@ const Board = () => {
 
     array.forEach((row, rowIndex) => {
       // check each row for row of 3
-      for (let i = 1; i < row.length; i++) {
+      for (let i = 0; i < row.length; i++) {
         if (row[i] === row[i + 1] && row[i + 1] === row[i + 2]) {
           // push candies in 3 in row into combo array
           combos.push([
@@ -105,50 +108,71 @@ const Board = () => {
 
     // array of all candies that need to be replaced
     const allComboIndexs = combos.flat();
+    return allComboIndexs;
+  };
 
-    boardConfig.forEach((candy, index) => {
-      for (let i = 0; i < allComboIndexs.length; i++) {
-        const removableCandy = index === allComboIndexs[i];
-        if (removableCandy) {
-          const item = Math.floor(Math.random() * boardColors.length);
-          const color = boardColors[item];
-          boardConfig.splice(index, 1, color);
+  const checkFourInARow = (array) => {
+    const combos = [];
+
+    array.forEach((row, rowIndex) => {
+      // check each row for row of 3
+      for (let i = 0; i < row.length; i++) {
+        if (
+          row[i] === row[i + 1] &&
+          row[i + 1] === row[i + 2] &&
+          row[i + 2] === row[i + 3]
+        ) {
+          // push candies in 4 in row into combo array
+          combos.push([
+            rowIndex * 8 + i,
+            rowIndex * 8 + i + 1,
+            rowIndex * 8 + i + 2,
+            rowIndex * 8 + i + 3,
+          ]);
         }
       }
     });
+    const allComboIndexs = combos.flat();
+    return allComboIndexs;
   };
+
+  const fourInRowIndexes = checkFourInARow(rows);
+  console.log(fourInRowIndexes);
+  const threeInRowIndexes = checkThreeInARow(rows);
+  console.log(threeInRowIndexes);
+
+  boardConfig.forEach((candy, index) => {
+    for (let i = 0; i < threeInRowIndexes.length; i++) {
+      const removableCandy = index === threeInRowIndexes[i];
+      if (removableCandy) {
+        const item = Math.floor(Math.random() * boardColors.length);
+        const color = boardColors[item];
+        boardConfig.splice(index, 1, color);
+      }
+    }
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (replaceableCandy) classes = styles.fade;
+      setReplaceableCandy(false);
+    }, 1000);
+    return clearTimeout(timer);
+  }, [replaceableCandy]);
 
   useEffect(() => {
     setCandiesToReplace(toBeReplaced);
   }, [toBeReplaced]);
 
-  checkThreeInARow(rows);
   useEffect(() => {
     createBoard();
   }, []);
-
-  const checkFourInARow = (array) => {
-    const combos = [];
-
-    for (let i = 1; i < array.length; i++) {
-      if (
-        array[i] === array[i + 1] &&
-        array[i + 1] === array[i + 2] &&
-        array[i + 2] === array[i + 3]
-      ) {
-        combos.push([i, i + 1, i + 2, i + 3]);
-      }
-    }
-    // console.log(combos);
-  };
-
-  checkFourInARow(boardConfig);
 
   // create the fruits
   const candys = boardConfig.map((color, index) => {
     let classes = "";
     if (+clickedID === index) classes = styles.firstSelection;
-    if (+secondClickedID === index) classes = styles.secondSelection;
+    // if (+secondClickedID === index) classes = styles.secondSelection;
     return (
       <div className={classes} key={index}>
         <Fruit

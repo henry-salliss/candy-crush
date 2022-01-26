@@ -16,7 +16,6 @@ const Fruit = (props) => {
     if (img.includes(props.color)) src = img;
   });
 
-  console.log(blank);
   if (props.color === "blank") src = blank;
 
   const longString = src.split("/").slice(-1);
