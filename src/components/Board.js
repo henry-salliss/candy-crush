@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 
 const Board = () => {
   const width = 8;
+  let toBeReplaced;
   // board state
   const [boardConfig, setBoardConfig] = useState([]);
+  const tempBoardIndexs = [];
+  const [boardIndexs, setBoardIndexs] = useState([]);
   const boardLayout = [];
   const boardColors = ["red", "yellow", "blue", "green", "purple", "orange"];
 
@@ -17,6 +20,10 @@ const Board = () => {
   // second candy selection
   const [secondClickedID, setSecondClickedID] = useState(100);
   const [secondCandySelected, setSecondSelectedCandy] = useState({});
+
+  // candies to be replaced
+  const replaceCandies = [];
+  const [candiesToReplace, setCandiesToReplace] = useState([]);
 
   // available movements
   const validMoves = [
@@ -34,6 +41,8 @@ const Board = () => {
 
   const createBoard = () => {
     for (let i = 1; i < 65; i++) {
+      tempBoardIndexs.push(i);
+      setBoardIndexs(tempBoardIndexs);
       const item = Math.floor(Math.random() * boardColors.length);
       const color = boardColors[item];
       boardLayout.push(color);
@@ -52,10 +61,6 @@ const Board = () => {
   };
 
   createRows(boardConfig);
-
-  useEffect(() => {
-    createBoard();
-  }, []);
 
   const firstCandyClickHandler = (e) => {
     setCandySelected(true);
@@ -85,8 +90,10 @@ const Board = () => {
     const combos = [];
 
     array.forEach((row, rowIndex) => {
+      // check each row for row of 3
       for (let i = 1; i < row.length; i++) {
         if (row[i] === row[i + 1] && row[i + 1] === row[i + 2]) {
+          // push candies in 3 in row into combo array
           combos.push([
             rowIndex * 8 + i,
             rowIndex * 8 + i + 1,
@@ -95,9 +102,30 @@ const Board = () => {
         }
       }
     });
-    console.log(combos);
+
+    // array of all candies that need to be replaced
+    const allComboIndexs = combos.flat();
+
+    boardConfig.forEach((candy, index) => {
+      for (let i = 0; i < allComboIndexs.length; i++) {
+        const removableCandy = index === allComboIndexs[i];
+        if (removableCandy) {
+          const item = Math.floor(Math.random() * boardColors.length);
+          const color = boardColors[item];
+          boardConfig.splice(index, 1, color);
+        }
+      }
+    });
   };
+
+  useEffect(() => {
+    setCandiesToReplace(toBeReplaced);
+  }, [toBeReplaced]);
+
   checkThreeInARow(rows);
+  useEffect(() => {
+    createBoard();
+  }, []);
 
   const checkFourInARow = (array) => {
     const combos = [];
